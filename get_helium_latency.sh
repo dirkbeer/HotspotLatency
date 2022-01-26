@@ -2,7 +2,7 @@
 
 
 #
-# traceroute -d -T -p 44158 68.8.113.7
+# nmap version
 #
 
 date | tr '\n' ' ' >> /home/dirk/hotspot_latency.txt
