@@ -1,6 +1,8 @@
 #!/bin/bash
 
-sleep 15s
+#
+# ncat version (doesn't time out like nmap)
+#
 
 date | tr '\n' ' ' >> /home/dirk/hotspot_latency2.txt
 
