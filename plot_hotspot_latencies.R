@@ -1,6 +1,11 @@
 require(ggplot2)
 require(scales)
 
+
+start_time <- '2022-01-30 12:00:00'
+ymax <- 3
+label_interval = "1 hours"
+
 mytz <- Sys.timezone(location = TRUE)
 
 setwd("C:\\Users\\FamilyBeer\\Desktop")
@@ -15,8 +20,7 @@ dat$V8 <- as.numeric(dat$V8)
 dat$V9 <- as.numeric(dat$V9)
 dat$V10 <- as.numeric(dat$V10)
 
-ymax <- 10
-label_interval = "4 hours"
+dat <- subset(dat, Date>as.POSIXct(start_time,tz=mytz))
 
 gg <- ggplot(dat, aes(x = Date, y = V8)) + geom_point() + ylim(c(-1,ymax)) +
   scale_x_datetime(labels = date_format("%H\n%a", tz=mytz), date_breaks = label_interval) +
