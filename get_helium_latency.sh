@@ -1,25 +1,27 @@
 #!/bin/bash
 
+# using nmap and variables, doesn't yet get the latency
 
-#
-# nmap version
-#
+outfilename=hotspot_latency.txt
+datetime=$(date | sed 's/\n//')
 
-date | tr '\n' ' ' >> /home/dirk/hotspot_latency.txt
+function get_hotspot_data () {
+	hs=("$@")
+	result=$(nmap -oG /dev/stdout -Pn -n -p ${hs[2]} -sV ${hs[1]} | grep Ports | sed 's/^.*Ports: //' | sed 's/Host is up\.//' |  sed 's/Host is up (//' | sed 's/s latency)\.//' | sed 's:/:\t:g')
+	printf "$datetime\t${hs[0]}\t${hs[1]}\t$result\n" >> $outfilename
+}
 
-# buffalo
-nmap -Pn -p 44158 99.171.178.180 | grep "Host is" | \
-sed 's/Host is up (//' | sed 's/s latency).//' | \
-tr '\n' ' ' \
->> /home/dirk/hotspot_latency.txt
+hs=(tadpole 68.8.112.183 44158)
+get_hotspot_data "${hs[@]}"
 
-# beaver
-nmap -Pn -p 44158 68.8.113.7 | grep "Host is" | \
-sed 's/Host is up (//' | sed 's/s latency).//' | \
-tr '\n' ' ' \
->> /home/dirk/hotspot_latency.txt
+hs=(buffalo 99.171.178.180 44158)
+get_hotspot_data "${hs[@]}"
 
-# spider
-nmap -Pn -p 44158 68.107.0.69 | grep "Host is" | \
-sed 's/Host is up (//' | sed 's/s latency).//' \
->> /home/dirk/hotspot_latency.txt
+hs=(beaver 72.26.117.34 44158)
+get_hotspot_data "${hs[@]}"
+
+hs=(spider 72.26.117.34 44158)
+get_hotspot_data "${hs[@]}"
+
+# keep file size reasonable by only keeping a maximum number of lines
+echo "$(tail -10000 hotspot_latency.txt)" > hotspot_latency.txt
