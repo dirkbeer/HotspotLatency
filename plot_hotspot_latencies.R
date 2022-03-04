@@ -1,38 +1,28 @@
 require(ggplot2)
 require(scales)
 
-
-start_time <- '2022-01-30 12:00:00'
-ymax <- 3
+#start_time <- '2022-03-03 00:00:00'
 label_interval = "1 hours"
 
 mytz <- Sys.timezone(location = TRUE)
 
 setwd("C:\\Users\\FamilyBeer\\Desktop")
 
-cmdstr <- "pscp -pw mysecret dirk@192.168.1.44:/home/dirk/hotspot_latency2.txt ."
+cmdstr <- "pscp -pw mysecret dirk@66.175.220.90:/home/dirk/hotspot_latency.txt ."
 shell(cmdstr)
 
-dat <- read.delim("hotspot_latency2.txt", header=FALSE, sep=" ")
-dat$date <- paste(dat$V2, dat$V3, dat$V4, dat$V5, dat$V6)
-dat$Date <- as.POSIXct(strptime(dat$date, format="%d %b %Y %I:%M:%S %p", tz=mytz), tz=mytz)
-dat$V8 <- as.numeric(dat$V8)
-dat$V9 <- as.numeric(dat$V9)
-dat$V10 <- as.numeric(dat$V10)
+dat <- read.delim("hotspot_latency.txt", header=FALSE, sep="\t")
+dat$Date <- as.POSIXct(strptime(dat$V1, format="%a %d %b %Y %I:%M:%S %p", tz="UTC"), tz=mytz)
+dat$Hotspot <- dat$V2
+dat$Latency <- as.numeric(dat$V11)
+dat$Service <- as.factor(dat$V8)
 
-dat <- subset(dat, Date>as.POSIXct(start_time,tz=mytz))
+#dat <- subset(dat, Date>as.POSIXct(start_time,tz=mytz))
 
-gg <- ggplot(dat, aes(x = Date, y = V8)) + geom_point() + ylim(c(-1,ymax)) +
+gg <- ggplot(dat, aes(x = Date, y = Latency, color=Service)) + geom_point() +
   scale_x_datetime(labels = date_format("%H\n%a", tz=mytz), date_breaks = label_interval) +
-  xlab("Time") + ylab("Latency (s)") + ggtitle("Buffalo")
-print(gg)
+  xlab("Time") + ylab("Latency (s)") + ggtitle("Hotspot p2p Response Latency") +
+  facet_wrap(~ Hotspot) +
+  ylim(min(dat$Latency), max(dat$Latency))
 
-gg <- ggplot(dat, aes(x = Date, y = V9)) + geom_point() + ylim(c(-1,ymax))+
-  scale_x_datetime(labels = date_format("%H\n%a", tz=mytz), date_breaks = label_interval) +
-  xlab("Time") + ylab("Latency (s)") + ggtitle("Beaver")
-print(gg)
-
-gg <- ggplot(dat, aes(x = Date, y = V10)) + geom_point() + ylim(c(-1,ymax)) +
-  scale_x_datetime(labels = date_format("%H\n%a", tz=mytz), date_breaks = label_interval) +
-  xlab("Time") + ylab("Latency (s)") + ggtitle("Spider")
 print(gg)
