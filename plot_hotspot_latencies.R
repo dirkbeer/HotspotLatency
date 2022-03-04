@@ -12,7 +12,7 @@ cmdstr <- "pscp -pw mysecret dirk@66.175.220.90:/home/dirk/hotspot_latency.txt .
 shell(cmdstr)
 
 dat <- read.delim("hotspot_latency.txt", header=FALSE, sep="\t")
-dat$Date <- as.POSIXct(strptime(dat$V1, format="%a %d %b %Y %I:%M:%S %p", tz="UTC"), tz=mytz)
+dat$Date <- as.POSIXct(strptime(dat$V1, format="%a %d %b %Y %I:%M:%S %p", tz="UTC"))
 dat$Hotspot <- dat$V2
 dat$Latency <- as.numeric(dat$V11)
 dat$Service <- as.factor(dat$V8)
