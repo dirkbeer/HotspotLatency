@@ -1,3 +1,4 @@
+# DEPRECATED - Recommend using the scripts in https://github.com/dirkbeer/HotspotLatencyWebapp instead (even if you don't intend to create a web application)
 # HotspotLatency
 
 Measure latency by running a simple bash script using cron in linux.
